@@ -6,13 +6,8 @@ using System.Threading.Tasks;
 
 namespace TodoTasks_YSoft
 {
-    class Program
+    class TasksManager
     {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("First Commit");
-
-            Console.ReadKey();
-        }
+        private List<Task> taskList;
     }
 }
