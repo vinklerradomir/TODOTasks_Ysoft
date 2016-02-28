@@ -270,28 +270,81 @@ namespace TodoTasks_YSoft
 
         public void Load(string input)
         {
-            var doc = new XmlDocument();
-            doc.Load("save.xml");
+            Console.WriteLine();
 
-            foreach (XmlNode node in doc.DocumentElement.ChildNodes)
+            string[] splitString = input.Split(new char[] { ' ' }, 2);
+            string path;
+
+            if (splitString.Length == 1)
             {
-                string desc = node.Attributes["Description"].Value;
-                bool completed = bool.Parse(node.Attributes["Completed"].Value);
-
-                if (completed)
+                if (String.IsNullOrEmpty(savePath))
                 {
-                    DateTime dateCompleted = DateTime.Parse(node.Attributes["DateCompleted"].Value);
-                    Task newTask = new Task(desc, dateCompleted);
-                    taskList.Add(newTask);
+                    Console.WriteLine("You need to specify a valid file path in the argument.");
+                    Console.WriteLine();
+                    return;
                 }
                 else
+                    path = savePath;
+            }
+            else
+                path = @splitString[1];
+
+            if (File.Exists(path))
+            {
+                if (taskList.Count != 0)
                 {
-                    Task newTask = new Task(desc);
-                    taskList.Add(newTask);
+                    Console.Write("Are you sure you want to load file {0}? Your current tasks will be lost. (y/n): ", Path.GetFileName(path));
+                    if (Console.ReadLine() != "y")
+                    {
+                        Console.WriteLine();
+                        return;
+                    }
                 }
             }
+            else
+            {
+                Console.WriteLine("Path is not correct. Please enter a valid path.");
+                Console.WriteLine();
+                return;
+            }
 
-            Console.WriteLine("Succesfully loaded {0} task(s)", doc.DocumentElement.ChildNodes.Count);
+            Console.WriteLine("Loading tasks from {0}", path);
+
+            try
+            {
+                XmlDocument doc = new XmlDocument();
+                doc.Load(path);
+
+                taskList = new List<Task>();
+
+                foreach (XmlNode node in doc.DocumentElement.ChildNodes)
+                {
+                    string desc = node.Attributes["Description"].Value;
+                    bool completed = bool.Parse(node.Attributes["Completed"].Value);
+
+                    if (completed)
+                    {
+                        DateTime dateCompleted = DateTime.Parse(node.Attributes["DateCompleted"].Value);
+                        Task newTask = new Task(desc, dateCompleted);
+                        taskList.Add(newTask);
+                    }
+                    else
+                    {
+                        Task newTask = new Task(desc);
+                        taskList.Add(newTask);
+                    }
+                }
+
+                Console.WriteLine("Succesfully loaded {0} task(s)", doc.DocumentElement.ChildNodes.Count);
+                savePath = path;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("An error occurred while loading:");
+                Console.WriteLine(e.Message);
+            }
+
+            Console.WriteLine();
         }
 
         private string TaskToString(Task task)
