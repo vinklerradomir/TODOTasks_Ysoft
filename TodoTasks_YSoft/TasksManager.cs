@@ -8,16 +8,59 @@ namespace TodoTasks_YSoft
 {
     class TasksManager
     {
-        public Dictionary<int, Task> taskList;
+        public List<Task> taskList;
 
         public TasksManager()
         {
-            this.taskList = new Dictionary<int, Task>();
+            this.taskList = new List<Task>();
         }
 
         public void AddTask(Task task)
         {
-            taskList.Add(task.Id, task);
+            taskList.Add(task);
+        }
+
+        public void Create()
+        {
+            Console.Write("Enter task description: ");
+            string taskDesc = Console.ReadLine();
+
+            Task newTask = new Task(taskDesc);
+            taskList.Add(newTask);
+        }
+
+        public bool Complete(int id)
+        {
+            if (id >= 0 && id < taskList.Count)
+            {
+                taskList[id].CompleteTask();
+                return true;
+            }
+            else
+                return false;
+        }
+
+        public bool Delete(int id)
+        {
+            if (id >= 0 && id < taskList.Count)
+            {
+                taskList.RemoveAt(id);
+                return true;
+            }
+            else
+                return false;
+        }
+
+        public bool Delete(int[] ids)
+        {
+            if (ids.Max() < taskList.Count && ids.Min() >= 0)
+            {
+                foreach (int i in ids.OrderByDescending(x => x))
+                    taskList.RemoveAt(i);
+                return true;
+            }
+            else
+                return false;
         }
 
         /// <summary>
@@ -25,26 +68,26 @@ namespace TodoTasks_YSoft
         /// </summary>
         /// <param name="type">1 for all tasks, 2 for incomplete tasks, 3 for completed tasks</param>
         /// <returns>String containing formatted text with selected tasks</returns>
-        public string DisplayTasks(int type)
+        public string Display(string type)
         {
             string output = "";
 
             switch (type)
             {
-                case 1:
-                    foreach (Task task in taskList.Values)
+                case "all":
+                    foreach (Task task in taskList)
                     {
                         output += TaskToString(task) + "\n";
                     }
                     break;
-                case 2:
-                    foreach (Task task in taskList.Values.Where(x => !x.Completed))
+                case "incomplete":
+                    foreach (Task task in taskList.Where(x => !x.Completed))
                     {
                         output += TaskToString(task) + "\n";
                     }
                     break;
-                case 3:
-                    foreach (Task task in taskList.Values.Where(x => x.Completed))
+                case "completed":
+                    foreach (Task task in taskList.Where(x => x.Completed))
                     {
                         output += TaskToString(task) + "\n";
                     }
@@ -61,7 +104,7 @@ namespace TodoTasks_YSoft
         {
             string output = "";
 
-            string id = String.Format("ID: {0}", task.Id).PadRight(10);
+            string id = String.Format("ID: {0}", taskList.IndexOf(task)).PadRight(10);
             string completed = task.Completed ? String.Format("Completed on: {0}", task.DateCompleted) : "Incpomlete";
 
             output += id + completed + "\n";
