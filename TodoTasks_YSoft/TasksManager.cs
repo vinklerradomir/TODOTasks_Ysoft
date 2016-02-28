@@ -29,50 +29,80 @@ namespace TodoTasks_YSoft
             taskList.Add(newTask);
         }
 
-        public bool Complete(int id)
+        public void Complete(string input)
         {
-            if (id >= 0 && id < taskList.Count)
-            {
-                taskList[id].CompleteTask();
-                return true;
-            }
-            else
-                return false;
-        }
+            char[] delimiters = new char[] { ' ', ',' };
+            string[] splitInput = input.Split(delimiters);
 
-        public bool Complete(int[] ids)
-        {
-            if (ids.Max() < taskList.Count && ids.Min() >= 0)
+            if (splitInput.Length == 1)
             {
-                foreach (int i in ids)
+                Console.WriteLine("Wrong argument, specify one or more IDs separated by commas");
+                return;
+            }
+
+            HashSet<int> removeIndices = new HashSet<int>();
+
+            //create indices from input string
+            for (int i = 1; i < splitInput.Length; i++)
+            {
+                int result;
+                if (int.TryParse(splitInput[i], out result))
+                    removeIndices.Add(result);
+            }
+
+            if (removeIndices.Count == 0)
+            {
+                Console.WriteLine("Wrong argument, specify one or more IDs separated by commas");
+                return;
+            }
+
+            if (removeIndices.Max() < taskList.Count && removeIndices.Min() >= 0)
+            {
+                foreach (int i in removeIndices)
                     taskList[i].CompleteTask();
-                return true;
             }
             else
-                return false;
-        }
-
-        public bool Delete(int id)
-        {
-            if (id >= 0 && id < taskList.Count)
             {
-                taskList.RemoveAt(id);
-                return true;
+                Console.WriteLine("ID or IDs not found in database");
             }
-            else
-                return false;
         }
 
-        public bool Delete(int[] ids)
+        public void Remove(string input)
         {
-            if (ids.Max() < taskList.Count && ids.Min() >= 0)
+            char[] delimiters = new char[] { ' ', ',' };
+            string[] splitInput = input.Split(delimiters);
+
+            if (splitInput.Length == 1)
             {
-                foreach (int i in ids.OrderByDescending(x => x))
+                Console.WriteLine("Wrong argument, specify one or more IDs separated by commas");
+                return;
+            }
+
+            HashSet<int> removeIndices = new HashSet<int>();
+
+            //create indices from input string
+            for (int i = 1; i < splitInput.Length; i++)
+            {
+                int result;
+                if (int.TryParse(splitInput[i], out result))
+                    removeIndices.Add(result);
+            }
+
+            if (removeIndices.Count == 0)
+            {
+                Console.WriteLine("Wrong argument, specify one or more IDs separated by commas");
+                return;
+            }
+
+            if (removeIndices.Max() < taskList.Count && removeIndices.Min() >= 0)
+            {
+                foreach (int i in removeIndices.OrderByDescending(x => x))
                     taskList.RemoveAt(i);
-                return true;
             }
             else
-                return false;
+            {
+                Console.WriteLine("ID or IDs not found in database");
+            }
         }
 
         /// <summary>
@@ -82,30 +112,36 @@ namespace TodoTasks_YSoft
         /// <returns>String containing formatted text with selected tasks</returns>
         public void Display(string type)
         {
+            Console.WriteLine();
+
             switch (type)
             {
                 case "all":
+                    if (taskList.Count == 0)
+                        Console.WriteLine("No tasks to show.");
                     foreach (Task task in taskList)
-                    {
                         Console.WriteLine(TaskToString(task));
-                    }
                     break;
                 case "incomplete":
-                    foreach (Task task in taskList.Where(x => !x.Completed))
-                    {
+                    List<Task> incompleteList = taskList.Where(x => !x.Completed).ToList();
+                    if (incompleteList.Count == 0)
+                        Console.WriteLine("No tasks to show.");
+                    foreach (Task task in incompleteList)
                         Console.WriteLine(TaskToString(task));
-                    }
                     break;
                 case "completed":
-                    foreach (Task task in taskList.Where(x => x.Completed))
-                    {
+                    List<Task> completedList = taskList.Where(x => x.Completed).ToList();
+                    if (completedList.Count == 0)
+                        Console.WriteLine("No tasks to show.");
+                    foreach (Task task in completedList)
                         Console.WriteLine(TaskToString(task));
-                    }
                     break;
                 default:
-                    Console.WriteLine("Wrong choice");
+                    Console.WriteLine("Wrong argument, use list all, list incomplete or list complete");
                     break;
             }
+
+            Console.WriteLine();
         }
 
         private string TaskToString(Task task)
@@ -145,7 +181,7 @@ namespace TodoTasks_YSoft
             //Copy remaining chars
             outDesc += descString.Substring(lastLineIndex, descString.Length - lastLineIndex);
 
-            output += outDesc + "\n";
+            output += outDesc;
 
             return output;
         }

@@ -29,6 +29,18 @@ namespace TodoTasks_YSoft
                     case "create":
                         manager.Create();
                         break;
+                    case "list":
+                        if (splitInput.Length == 1)
+                            manager.Display("all");
+                        else
+                            manager.Display(splitInput[1]);
+                        break;
+                    case "remove":
+                        manager.Remove(userInput);
+                        break;
+                    case "complete":
+                        manager.Complete(userInput);
+                        break;
                     case "help":
                         DisplayHelp();
                         break;
