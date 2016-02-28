@@ -22,11 +22,15 @@ namespace TodoTasks_YSoft
 
         public void Create()
         {
+            Console.WriteLine();
+
             Console.Write("Enter task description: ");
             string taskDesc = Console.ReadLine();
 
             Task newTask = new Task(taskDesc);
             taskList.Add(newTask);
+
+            Console.WriteLine();
         }
 
         public void Complete(string input)
@@ -34,43 +38,51 @@ namespace TodoTasks_YSoft
             char[] delimiters = new char[] { ' ', ',' };
             string[] splitInput = input.Split(delimiters);
 
+            Console.WriteLine();
+
             if (splitInput.Length == 1)
             {
                 Console.WriteLine("Wrong argument, specify one or more IDs separated by commas");
+                Console.WriteLine();
                 return;
             }
 
-            HashSet<int> removeIndices = new HashSet<int>();
+            HashSet<int> completeIndices = new HashSet<int>();
 
             //create indices from input string
             for (int i = 1; i < splitInput.Length; i++)
             {
                 int result;
                 if (int.TryParse(splitInput[i], out result))
-                    removeIndices.Add(result);
+                    completeIndices.Add(result);
             }
 
-            if (removeIndices.Count == 0)
+            if (completeIndices.Count == 0)
             {
                 Console.WriteLine("Wrong argument, specify one or more IDs separated by commas");
                 return;
             }
 
-            if (removeIndices.Max() < taskList.Count && removeIndices.Min() >= 0)
+            if (completeIndices.Max() < taskList.Count && completeIndices.Min()  >= 0)
             {
-                foreach (int i in removeIndices)
+                foreach (int i in completeIndices)
                     taskList[i].CompleteTask();
+                Console.WriteLine("{0} task(s) completed", completeIndices.Count);
             }
             else
             {
                 Console.WriteLine("ID or IDs not found in database");
             }
+
+            Console.WriteLine();
         }
 
         public void Remove(string input)
         {
             char[] delimiters = new char[] { ' ', ',' };
             string[] splitInput = input.Split(delimiters);
+
+            Console.WriteLine();
 
             if (splitInput.Length == 1)
             {
@@ -98,11 +110,14 @@ namespace TodoTasks_YSoft
             {
                 foreach (int i in removeIndices.OrderByDescending(x => x))
                     taskList.RemoveAt(i);
+                Console.WriteLine("{0} task(s) removed", removeIndices.Count);
             }
             else
             {
                 Console.WriteLine("ID or IDs not found in database");
             }
+
+            Console.WriteLine();
         }
 
         /// <summary>
