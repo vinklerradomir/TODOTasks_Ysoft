@@ -12,6 +12,7 @@ namespace TodoTasks_YSoft
         {
             //setup
             TasksManager manager = new TasksManager();
+            //So we can review listed tasks
             Console.BufferHeight = 1000;
 
             Console.WriteLine("Welcome to Task Manager.");

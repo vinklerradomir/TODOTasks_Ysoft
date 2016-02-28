@@ -18,6 +18,9 @@ namespace TodoTasks_YSoft
             this.taskList = new List<Task>();
         }
 
+        /// <summary>
+        /// Creates a task after entering command create and then entering text
+        /// </summary>
         public void Create()
         {
             Console.WriteLine();
@@ -28,13 +31,17 @@ namespace TodoTasks_YSoft
             Task newTask = new Task(taskDesc);
             taskList.Add(newTask);
 
+            Console.WriteLine("Task created");
+
             Console.WriteLine();
         }
 
+        /// <summary>
+        /// Creates a task straight from input command create "text"
+        /// </summary>
+        /// <param name="input">raw input string from command line</param>
         public void Create(string input)
         {
-            Console.WriteLine();
-
             string desc = input.Remove(0, 7);
             Task newTask = new Task(desc);
             taskList.Add(newTask);
@@ -44,6 +51,10 @@ namespace TodoTasks_YSoft
             Console.WriteLine();
         }
 
+        /// <summary>
+        /// Selects tasks from the input numbers that should be completed.
+        /// </summary>
+        /// <param name="input">raw input string from console, should be in format complete [number(s)] or complete all</param>
         public void Complete(string input)
         {
             char[] delimiters = new char[] { ' ', ',' };
@@ -97,6 +108,10 @@ namespace TodoTasks_YSoft
             Console.WriteLine();
         }
 
+        /// <summary>
+        /// Removes selected tasks from the list of tasks based on their ID.
+        /// </summary>
+        /// <param name="input">raw input string from console, should be in format remove [number(s)] or remove completed</param>
         public void Remove(string input)
         {
             char[] delimiters = new char[] { ' ', ',' };
@@ -188,6 +203,9 @@ namespace TodoTasks_YSoft
             Console.WriteLine();
         }
 
+        /// <summary>
+        /// Creates a new list of tasks, all former tasks will be lost
+        /// </summary>
         public void New()
         {
             Console.Write("Are you sure you want to erase all tasks? (y/n): ");
@@ -202,6 +220,10 @@ namespace TodoTasks_YSoft
             Console.WriteLine();
         }
 
+        /// <summary>
+        /// Saves the tasks to an XML file in the specified path. If no path is specified than it saves it to the last used path. Throws an error if the path is incorrect.
+        /// </summary>
+        /// <param name="input">raw input string from console, in format save "path"</param>
         public void Save(string input)
         {
             Console.WriteLine();
@@ -277,6 +299,10 @@ namespace TodoTasks_YSoft
             Console.WriteLine();
         }
 
+        /// <summary>
+        /// Loads the tasks from a specified XML file. If no path is specified then it loads it from the last used path. Throws an error if the path is wrong.
+        /// </summary>
+        /// <param name="input">raw input string from console, in format load "path"</param>
         public void Load(string input)
         {
             Console.WriteLine();
@@ -324,7 +350,7 @@ namespace TodoTasks_YSoft
                 XmlDocument doc = new XmlDocument();
                 doc.Load(path);
 
-                taskList = new List<Task>();
+                List<Task> loadedList = new List<Task>();
 
                 foreach (XmlNode node in doc.DocumentElement.ChildNodes)
                 {
@@ -335,16 +361,17 @@ namespace TodoTasks_YSoft
                     {
                         DateTime dateCompleted = DateTime.Parse(node.Attributes["DateCompleted"].Value);
                         Task newTask = new Task(desc, dateCompleted);
-                        taskList.Add(newTask);
+                        loadedList.Add(newTask);
                     }
                     else
                     {
                         Task newTask = new Task(desc);
-                        taskList.Add(newTask);
+                        loadedList.Add(newTask);
                     }
                 }
 
                 Console.WriteLine("Succesfully loaded {0} task(s)", doc.DocumentElement.ChildNodes.Count);
+                taskList = loadedList;
                 savePath = path;
             }
             catch (Exception e)
