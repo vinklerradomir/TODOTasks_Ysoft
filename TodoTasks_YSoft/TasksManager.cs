@@ -40,6 +40,18 @@ namespace TodoTasks_YSoft
                 return false;
         }
 
+        public bool Complete(int[] ids)
+        {
+            if (ids.Max() < taskList.Count && ids.Min() >= 0)
+            {
+                foreach (int i in ids)
+                    taskList[i].CompleteTask();
+                return true;
+            }
+            else
+                return false;
+        }
+
         public bool Delete(int id)
         {
             if (id >= 0 && id < taskList.Count)
@@ -68,36 +80,32 @@ namespace TodoTasks_YSoft
         /// </summary>
         /// <param name="type">1 for all tasks, 2 for incomplete tasks, 3 for completed tasks</param>
         /// <returns>String containing formatted text with selected tasks</returns>
-        public string Display(string type)
+        public void Display(string type)
         {
-            string output = "";
-
             switch (type)
             {
                 case "all":
                     foreach (Task task in taskList)
                     {
-                        output += TaskToString(task) + "\n";
+                        Console.WriteLine(TaskToString(task));
                     }
                     break;
                 case "incomplete":
                     foreach (Task task in taskList.Where(x => !x.Completed))
                     {
-                        output += TaskToString(task) + "\n";
+                        Console.WriteLine(TaskToString(task));
                     }
                     break;
                 case "completed":
                     foreach (Task task in taskList.Where(x => x.Completed))
                     {
-                        output += TaskToString(task) + "\n";
+                        Console.WriteLine(TaskToString(task));
                     }
                     break;
                 default:
-                    output = "Wrong choice";
+                    Console.WriteLine("Wrong choice");
                     break;
             }
-
-            return output;
         }
 
         private string TaskToString(Task task)
