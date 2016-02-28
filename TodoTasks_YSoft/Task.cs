@@ -8,13 +8,20 @@ namespace TodoTasks_YSoft
 {
     class Task
     {
-        public string Description;
-        public bool Completed;
-        public DateTime DateCompleted;
+        public string Description { get; private set; }
+        public bool Completed { get; private set; }
+        public DateTime DateCompleted { get; private set; }
 
         public Task(string desc)
         {
             this.Description = desc;
+        }
+
+        public Task(string desc, DateTime dateCompleted)
+        {
+            this.Description = desc;
+            this.Completed = true;
+            this.DateCompleted = dateCompleted;
         }
 
         public void CompleteTask()

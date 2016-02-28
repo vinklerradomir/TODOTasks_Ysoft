@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace TodoTasks_YSoft
 {
     class TasksManager
     {
-        public List<Task> taskList;
+        private List<Task> taskList;
+        private string savePath;
 
         public TasksManager()
         {
@@ -33,6 +35,19 @@ namespace TodoTasks_YSoft
             Console.WriteLine();
         }
 
+        public void Create(string input)
+        {
+            Console.WriteLine();
+
+            string desc = input.Remove(0, 7);
+            Task newTask = new Task(desc);
+            taskList.Add(newTask);
+
+            Console.WriteLine("Task created");
+
+            Console.WriteLine();
+        }
+
         public void Complete(string input)
         {
             char[] delimiters = new char[] { ' ', ',' };
@@ -43,6 +58,15 @@ namespace TodoTasks_YSoft
             if (splitInput.Length == 1)
             {
                 Console.WriteLine("Wrong argument, specify one or more IDs separated by commas");
+                Console.WriteLine();
+                return;
+            }
+
+            if (splitInput[1] == "all")
+            {
+                foreach (Task task in taskList.Where(x => !x.Completed))
+                    task.CompleteTask();
+                Console.WriteLine("All tasks marked complete");
                 Console.WriteLine();
                 return;
             }
@@ -87,6 +111,15 @@ namespace TodoTasks_YSoft
             if (splitInput.Length == 1)
             {
                 Console.WriteLine("Wrong argument, specify one or more IDs separated by commas");
+                Console.WriteLine();
+                return;
+            }
+
+            if (splitInput[1] == "completed")
+            {
+                taskList.RemoveAll(x => x.Completed);
+                Console.WriteLine("Removed all completed tasks");
+                Console.WriteLine();
                 return;
             }
 
@@ -157,6 +190,60 @@ namespace TodoTasks_YSoft
             }
 
             Console.WriteLine();
+        }
+
+        public void Save(string input)
+        {
+            using (XmlWriter writer = XmlWriter.Create("save.xml"))
+            {
+                writer.WriteStartDocument();
+                writer.WriteStartElement("Tasks");
+
+                foreach (Task task in taskList)
+                {
+                    writer.WriteStartElement("Task");
+
+                    writer.WriteAttributeString("Description", task.Description);
+                    writer.WriteAttributeString("Completed", task.Completed.ToString());
+                    if (task.Completed)
+                        writer.WriteAttributeString("DateCompleted", task.DateCompleted.ToString());
+                    else
+                        writer.WriteAttributeString("DateCompleted", null);
+
+                    writer.WriteEndElement();
+                }
+
+                writer.WriteEndElement();
+                writer.WriteEndDocument();
+            }
+
+            Console.WriteLine("Tasks succesfully saved to file \"{0}\"", input);
+        }
+
+        public void Load(string input)
+        {
+            var doc = new XmlDocument();
+            doc.Load("save.xml");
+
+            foreach (XmlNode node in doc.DocumentElement.ChildNodes)
+            {
+                string desc = node.Attributes["Description"].Value;
+                bool completed = bool.Parse(node.Attributes["Completed"].Value);
+
+                if (completed)
+                {
+                    DateTime dateCompleted = DateTime.Parse(node.Attributes["DateCompleted"].Value);
+                    Task newTask = new Task(desc, dateCompleted);
+                    taskList.Add(newTask);
+                }
+                else
+                {
+                    Task newTask = new Task(desc);
+                    taskList.Add(newTask);
+                }
+            }
+
+            Console.WriteLine("Succesfully loaded {0} task(s)", doc.DocumentElement.ChildNodes.Count);
         }
 
         private string TaskToString(Task task)

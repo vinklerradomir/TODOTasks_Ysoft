@@ -15,7 +15,7 @@ namespace TodoTasks_YSoft
             Console.BufferHeight = 1000;
 
             Console.WriteLine("Welcome to Task Manager.");
-            Console.WriteLine("Possible commands are list (all, complete, incomplete), create, remove(ID, IDs), complete (ID, IDs), save (path), load(path), help");
+            Console.WriteLine("Possible commands are list (all, complete, incomplete), create, remove(ID, IDs, completed), complete (ID, IDs, all), save (path), load(path), help");
 
             string userInput = "";
 
@@ -27,7 +27,10 @@ namespace TodoTasks_YSoft
                 switch (splitInput[0].ToLower())
                 {
                     case "create":
-                        manager.Create();
+                        if (splitInput.Length == 1)
+                            manager.Create();
+                        else
+                            manager.Create(userInput);
                         break;
                     case "list":
                         if (splitInput.Length == 1)
@@ -40,6 +43,12 @@ namespace TodoTasks_YSoft
                         break;
                     case "complete":
                         manager.Complete(userInput);
+                        break;
+                    case "save":
+                        manager.Save(userInput);
+                        break;
+                    case "load":
+                        manager.Load(userInput);
                         break;
                     case "help":
                         DisplayHelp();
@@ -71,7 +80,9 @@ namespace TodoTasks_YSoft
             Console.WriteLine("list ... Lists all tasks, you can specify incomplete or completed");
             Console.WriteLine("create ... Creates a new task");
             Console.WriteLine("remove ... Removes a task with ID, or IDs separated by commas");
+            Console.WriteLine("remove completed ... Removes all completed tasks");
             Console.WriteLine("complete ... Marks a task as complete with ID or IDs separated by commas");
+            Console.WriteLine("complete all ... Marks all tasks as completed");
             Console.WriteLine("save ... Saves the tasks in the specified path it an XML file");
             Console.WriteLine("load ... Loads the tasks from the specified XML file");
             Console.WriteLine("help ... Displays this help message");
