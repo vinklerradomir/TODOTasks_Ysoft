@@ -16,7 +16,7 @@ namespace TodoTasks_YSoft
             Console.BufferHeight = 1000;
 
             Console.WriteLine("Welcome to Task Manager.");
-            Console.WriteLine("Possible commands are list (all, complete, incomplete), create, remove(ID, IDs, completed), complete (ID, IDs, all), save (path), load(path), help");
+            Console.WriteLine("Possible commands are list (all, complete, incomplete), create, remove(ID, IDs, completed), complete (ID, IDs, all), new, save (path), load(path), help, exit");
 
             string userInput = "";
 
@@ -91,6 +91,7 @@ namespace TodoTasks_YSoft
             Console.WriteLine("load ... Loads the tasks from the specified XML file");
             Console.WriteLine("new ... Erases all the tasks");
             Console.WriteLine("help ... Displays this help message");
+            Console.WriteLine("exit ... Exits the application");
             Console.WriteLine();
         }
     }
