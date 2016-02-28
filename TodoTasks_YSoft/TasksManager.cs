@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -194,30 +195,77 @@ namespace TodoTasks_YSoft
 
         public void Save(string input)
         {
-            using (XmlWriter writer = XmlWriter.Create("save.xml"))
+            Console.WriteLine();
+
+            string[] splitString = input.Split(new char[]{' '}, 2);
+            string path;
+
+            if (splitString.Length == 1)
             {
-                writer.WriteStartDocument();
-                writer.WriteStartElement("Tasks");
-
-                foreach (Task task in taskList)
+                if (String.IsNullOrEmpty(savePath))
                 {
-                    writer.WriteStartElement("Task");
-
-                    writer.WriteAttributeString("Description", task.Description);
-                    writer.WriteAttributeString("Completed", task.Completed.ToString());
-                    if (task.Completed)
-                        writer.WriteAttributeString("DateCompleted", task.DateCompleted.ToString());
-                    else
-                        writer.WriteAttributeString("DateCompleted", null);
-
-                    writer.WriteEndElement();
+                    Console.WriteLine("You need to specify a valid file path in the argument.");
+                    Console.WriteLine();
+                    return;
                 }
-
-                writer.WriteEndElement();
-                writer.WriteEndDocument();
+                else
+                    path = savePath;
+            }
+            else
+            {
+                path = @splitString[1];
+                if (File.Exists(path))
+                {
+                    Console.Write("Are you sure you want to overwrite file {0}? (y/n): ", Path.GetFileName(path));
+                    if (Console.ReadLine() != "y")
+                    {
+                        Console.WriteLine();
+                        return;
+                    }
+                }
             }
 
-            Console.WriteLine("Tasks succesfully saved to file \"{0}\"", input);
+            Console.WriteLine("Saving tasks to {0}", path);
+
+            try
+            {
+                using (XmlWriter writer = XmlWriter.Create(path))
+                {
+                    writer.WriteStartDocument();
+                    writer.WriteStartElement("Tasks");
+
+                    foreach (Task task in taskList)
+                    {
+                        writer.WriteStartElement("Task");
+
+                        writer.WriteAttributeString("Description", task.Description);
+                        writer.WriteAttributeString("Completed", task.Completed.ToString());
+                        if (task.Completed)
+                            writer.WriteAttributeString("DateCompleted", task.DateCompleted.ToString());
+                        else
+                            writer.WriteAttributeString("DateCompleted", null);
+
+                        writer.WriteEndElement();
+                    }
+
+                    writer.WriteEndElement();
+                    writer.WriteEndDocument();
+                }
+
+                Console.WriteLine("Tasks succesfully saved to file \"{0}\"", path);
+                savePath = path;
+            }
+            catch (DirectoryNotFoundException ex)
+            {
+                Console.WriteLine("Path to directory is not correct, please enter a valid path");
+            }
+            catch (Exception e) 
+            {
+                Console.WriteLine("An error occurred while saving:");
+                Console.WriteLine(e.Message);
+            }
+
+            Console.WriteLine();
         }
 
         public void Load(string input)
