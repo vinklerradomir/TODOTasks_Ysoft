@@ -18,11 +18,6 @@ namespace TodoTasks_YSoft
             this.taskList = new List<Task>();
         }
 
-        public void AddTask(Task task)
-        {
-            taskList.Add(task);
-        }
-
         public void Create()
         {
             Console.WriteLine();
@@ -193,6 +188,20 @@ namespace TodoTasks_YSoft
             Console.WriteLine();
         }
 
+        public void New()
+        {
+            Console.Write("Are you sure you want to erase all tasks? (y/n): ");
+            if (Console.ReadLine() != "y")
+            {
+                Console.WriteLine();
+                return;
+            }
+
+            taskList = new List<Task>();
+            Console.WriteLine("Tasks erased");
+            Console.WriteLine();
+        }
+
         public void Save(string input)
         {
             Console.WriteLine();
@@ -255,7 +264,7 @@ namespace TodoTasks_YSoft
                 Console.WriteLine("Tasks succesfully saved to file \"{0}\"", path);
                 savePath = path;
             }
-            catch (DirectoryNotFoundException ex)
+            catch (DirectoryNotFoundException)
             {
                 Console.WriteLine("Path to directory is not correct, please enter a valid path");
             }

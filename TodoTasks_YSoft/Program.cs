@@ -50,6 +50,9 @@ namespace TodoTasks_YSoft
                     case "load":
                         manager.Load(userInput);
                         break;
+                    case "new":
+                        manager.New();
+                        break;
                     case "help":
                         DisplayHelp();
                         break;
@@ -85,6 +88,7 @@ namespace TodoTasks_YSoft
             Console.WriteLine("complete all ... Marks all tasks as completed");
             Console.WriteLine("save ... Saves the tasks in the specified path it an XML file");
             Console.WriteLine("load ... Loads the tasks from the specified XML file");
+            Console.WriteLine("new ... Erases all the tasks");
             Console.WriteLine("help ... Displays this help message");
             Console.WriteLine();
         }
